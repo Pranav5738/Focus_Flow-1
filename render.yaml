@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: focusflow-backend
+    env: python
+    plan: free
+    buildCommand: python -m pip install --upgrade pip && pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.server:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Render recommended
+      - key: PYTHON_VERSION
+        value: 3.11.7
+      - key: APP_ENV
+        value: production
+
+      # REQUIRED for production (backend refuses to start with default)
+      - key: JWT_SECRET
+        sync: false
+
+      # Set this to your Vercel domain(s), comma-separated.
+      # Example: https://focus-flow-1.vercel.app,https://www.your-domain.com
+      - key: CORS_ORIGINS
+        sync: false
+
+      # Recommended (production): use MongoDB (e.g., MongoDB Atlas)
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: habit_tracker
